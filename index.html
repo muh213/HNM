@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Database Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">School Database Management</h1>
+            <div class="flex gap-2 mb-6 border-b">
+                <button class="tab-btn" onclick="setActiveTab('students')">Students</button>
+                <button class="tab-btn" onclick="setActiveTab('drivers')">Drivers</button>
+                <button class="tab-btn" onclick="setActiveTab('teachers')">Teachers</button>
+            </div>
+            
+            <div id="form-container"></div>
+
+            <div id="data-table"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
