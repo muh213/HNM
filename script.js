@@ -10,18 +10,40 @@ let editingId = null;
 const formContainer = document.getElementById('form-container');
 const dataTable = document.getElementById('data-table');
 
+// Handle Text Animation
+setInterval(() => {
+    const hinmText = document.getElementById('hinm-text');
+    const fullText = document.getElementById('full-text');
+
+    hinmText.classList.toggle('hidden');
+    fullText.classList.toggle('hidden');
+}, 3000);
+
 // Render tab data based on active tab
 function setActiveTab(tab) {
     activeTab = tab;
     renderForm();
     renderTable();
+    updateTabStyles();
+}
+
+// Update styles for active tab
+function updateTabStyles() {
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(tab => {
+        if (tab.textContent.toLowerCase() === activeTab) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
 }
 
 // Render the form based on the active tab (for adding/editing entries)
 function renderForm() {
     const formHtml = `
         <div class="flex gap-4 mb-6">
-            <input type="text" id="name" placeholder="${activeTab} Name" class="input-field" />
+            <input type="text" id="name" placeholder="${capitalize(activeTab)} Name" class="input-field" />
             <input type="text" id="iqama" placeholder="Iqama Number" class="input-field" />
             <button onclick="handleAdd()" class="add-btn">${isAdding ? 'Add' : 'Update'} ${capitalize(activeTab)}</button>
         </div>
@@ -33,7 +55,7 @@ function renderForm() {
 function renderTable() {
     let data = [];
     let headers = [];
-    
+
     if (activeTab === 'students') {
         data = students;
         headers = ['Name', 'Iqama'];
@@ -88,14 +110,14 @@ function handleAdd() {
             }
             editingId = null;
         } else {
-            // Add new
-            const newItem = { id: Date.now(), name, iqama };
+            // Add
+            const newId = Date.now();
             if (activeTab === 'students') {
-                students.push(newItem);
+                students.push({ id: newId, name, iqama });
             } else if (activeTab === 'drivers') {
-                drivers.push(newItem);
+                drivers.push({ id: newId, name, iqama });
             } else if (activeTab === 'teachers') {
-                teachers.push(newItem);
+                teachers.push({ id: newId, name, iqama });
             }
         }
 
@@ -106,42 +128,30 @@ function handleAdd() {
 
 // Edit an entry
 function handleEdit(id) {
-    const item = getItemById(id);
-    document.getElementById('name').value = item.name;
-    document.getElementById('iqama').value = item.iqama;
-    editingId = id;
-    renderForm();
+    const item = [...students, ...drivers, ...teachers].find(item => item.id === id);
+    if (item) {
+        document.getElementById('name').value = item.name;
+        document.getElementById('iqama').value = item.iqama;
+        editingId = id;
+    }
 }
 
 // Delete an entry
 function handleDelete(id) {
-    if (confirm('Are you sure you want to delete this entry?')) {
-        if (activeTab === 'students') {
-            students = students.filter(s => s.id !== id);
-        } else if (activeTab === 'drivers') {
-            drivers = drivers.filter(d => d.id !== id);
-        } else if (activeTab === 'teachers') {
-            teachers = teachers.filter(t => t.id !== id);
-        }
-        renderTable();
-    }
-}
-
-// Get item by id (helper function)
-function getItemById(id) {
     if (activeTab === 'students') {
-        return students.find(s => s.id === id);
+        students = students.filter(item => item.id !== id);
     } else if (activeTab === 'drivers') {
-        return drivers.find(d => d.id === id);
+        drivers = drivers.filter(item => item.id !== id);
     } else if (activeTab === 'teachers') {
-        return teachers.find(t => t.id === id);
+        teachers = teachers.filter(item => item.id !== id);
     }
+    renderTable();
 }
 
-// Capitalize the first letter of the word
+// Helper function for capitalizing tab names
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Initialize
-setActiveTab('students');
+renderForm();
+renderTable();
